@@ -28,7 +28,7 @@ export const MM_TO_PX_SCREEN = 3.7795275591;
 export const A4_WIDTH_MM = 210;
 export const A4_HEIGHT_MM = 297;
 
-export function mmToPx(mm: number, dpi = 96): number {
+export function mmToPx(mm: number, dpi = 300): number {
   return (mm / 25.4) * dpi;
 }
 
