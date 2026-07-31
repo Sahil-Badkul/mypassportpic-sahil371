@@ -44,6 +44,9 @@ export function renderPhotoToCanvas(
     const ctx = canvas.getContext("2d");
     if (!ctx) return reject(new Error("No canvas context"));
 
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
     const img = new Image();
     img.onload = () => {
       const photoAreaHeight = settings.showNameDate
@@ -131,7 +134,7 @@ export function renderPhotoToCanvas(
 export async function generateA4Canvas(
   photos: PhotoSettings[],
   photosPerRow: number,
-  dpi = 200,
+  dpi = 300,
   totalPhotos?: number,
 ): Promise<HTMLCanvasElement> {
   const a4W = Math.round(mmToPx(A4_WIDTH_MM, dpi));
@@ -182,7 +185,7 @@ export async function generateA4Canvas(
 }
 
 export function canvasToDataURL(canvas: HTMLCanvasElement): string {
-  return canvas.toDataURL("image/jpeg", 0.95);
+  return canvas.toDataURL("image/jpeg", 0.98);
 }
 
 export async function downloadAsPDF(
@@ -190,7 +193,7 @@ export async function downloadAsPDF(
   filename = "passport-photos.pdf",
 ) {
   const { jsPDF } = await import("jspdf");
-  const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+  const dataUrl = canvas.toDataURL("image/jpeg", 0.98);
   const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   pdf.addImage(dataUrl, "JPEG", 0, 0, 210, 297);
   pdf.save(filename);

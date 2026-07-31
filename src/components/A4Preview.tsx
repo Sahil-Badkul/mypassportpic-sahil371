@@ -19,10 +19,10 @@ export default function A4Preview({ photos, photosPerRow, totalPhotos }: Props) 
     const timer = setTimeout(() => {
       setLoading(true);
 
-      generateA4Canvas(photos, photosPerRow, 150, totalPhotos)
+      generateA4Canvas(photos, photosPerRow, 300, totalPhotos)
         .then((canvas) => {
           if (!cancelled) {
-            setPreviewUrl(canvas.toDataURL("image/jpeg", 0.9));
+            setPreviewUrl(canvas.toDataURL("image/png"));
             setLoading(false);
           }
         })
@@ -35,7 +35,7 @@ export default function A4Preview({ photos, photosPerRow, totalPhotos }: Props) 
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [photos, photosPerRow]);
+  }, [photos, photosPerRow, totalPhotos]);
   return (
     <div ref={containerRef} className="w-full">
       <div

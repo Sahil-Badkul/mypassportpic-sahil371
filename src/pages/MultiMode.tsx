@@ -16,7 +16,7 @@ const defaultSettings = (imageSrc = ""): PhotoSettings => ({
   name: "",
   date: "",
   showNameDate: false,
-  showBorder: false,
+  showBorder: true,
 });
 
 type Step = "upload" | "adjust" | "layout" | "preview";
@@ -68,7 +68,7 @@ export default function MultiMode() {
   const handleDownload = async () => {
     setDownloading(true);
     try {
-      const canvas = await generateA4Canvas(uploadedPhotos, photosPerRow, 200);
+      const canvas = await generateA4Canvas(uploadedPhotos, photosPerRow, 300);
       await downloadAsPDF(canvas, "passport-photos-multi.pdf");
     } finally {
       setDownloading(false);
@@ -76,8 +76,8 @@ export default function MultiMode() {
   };
 
   const handlePrint = async () => {
-    const canvas = await generateA4Canvas(uploadedPhotos, photosPerRow, 200);
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+    const canvas = await generateA4Canvas(uploadedPhotos, photosPerRow, 300);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.98);
 
     if (printImgRef.current && printAreaRef.current) {
       const img = printImgRef.current;

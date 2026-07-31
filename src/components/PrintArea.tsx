@@ -12,9 +12,9 @@ export default function PrintArea({ photos, photosPerRow, totalPhotos }: Props) 
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    generateA4Canvas(photos, photosPerRow, 200, totalPhotos).then((canvas) => {
+    generateA4Canvas(photos, photosPerRow, 300, totalPhotos).then((canvas) => {
       if (imgRef.current) {
-        imgRef.current.src = canvas.toDataURL("image/jpeg", 0.95);
+        imgRef.current.src = canvas.toDataURL("image/jpeg", 0.98);
       }
     });
   }, [photos, photosPerRow, totalPhotos]);

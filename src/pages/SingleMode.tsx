@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, type ChangeEvent } from "react";
 import { useLocation } from "wouter";
 import PhotoSettingsPanel from "@/components/PhotoSettingsPanel";
 import A4Preview from "@/components/A4Preview";
@@ -13,7 +13,7 @@ const defaultSettings = (): PhotoSettings => ({
   name: "",
   date: "",
   showNameDate: false,
-  showBorder: false,
+  showBorder: true,
 });
 
 type Step = "upload" | "adjust" | "layout" | "preview";
@@ -30,10 +30,40 @@ export default function SingleMode() {
   const [step, setStep] = useState<Step>("upload");
   const [settings, setSettings] = useState<PhotoSettings>(defaultSettings());
   const [totalPhotos, setTotalPhotos] = useState(5); // default 5
+  const [totalPhotosInput, setTotalPhotosInput] = useState(String(5));
   const [downloading, setDownloading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const printAreaRef = useRef<HTMLDivElement>(null);
   const printImgRef = useRef<HTMLImageElement>(null);
+
+  const handleTotalPhotosChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, "");
+    if (raw === "") {
+      setTotalPhotosInput("");
+      return;
+    }
+
+    let val = parseInt(raw, 10);
+    if (Number.isNaN(val)) {
+      setTotalPhotosInput("");
+      return;
+    }
+
+    if (val > 30) val = 30;
+    if (val < 1) val = 1;
+
+    setTotalPhotosInput(String(val));
+    setTotalPhotos(val);
+  };
+
+  const handleTotalPhotosBlur = () => {
+    if (!totalPhotosInput) {
+      setTotalPhotosInput("1");
+      setTotalPhotos(1);
+    } else {
+      setTotalPhotosInput(String(totalPhotos));
+    }
+  };
 
   const handleFile = useCallback((file: File) => {
     const reader = new FileReader();
@@ -74,7 +104,7 @@ export default function SingleMode() {
       const canvas = await generateA4Canvas(
         buildPhotoArray(),
         photosPerRow,
-        200,
+        300,
         totalPhotos,
       );
       await downloadAsPDF(canvas);
@@ -87,10 +117,10 @@ export default function SingleMode() {
     const canvas = await generateA4Canvas(
       buildPhotoArray(),
       photosPerRow,
-      200,
+      300,
       totalPhotos,
     );
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.98);
 
     if (printImgRef.current && printAreaRef.current) {
       const img = printImgRef.current;
@@ -272,16 +302,15 @@ export default function SingleMode() {
                   Number of Photos
                 </label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   min={1}
                   max={30}
-                  value={totalPhotos}
-                  onChange={(e) => {
-                    let val = parseInt(e.target.value) || 1;
-                    if (val > 30) val = 30;
-                    if (val < 1) val = 1;
-                    setTotalPhotos(val);
-                  }}
+                  value={totalPhotosInput}
+                  onChange={handleTotalPhotosChange}
+                  onBlur={handleTotalPhotosBlur}
+                  placeholder="1"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                 />
                 <p className="text-xs text-gray-400 mt-1">
